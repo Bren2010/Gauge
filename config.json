@@ -1,0 +1,11 @@
+{
+    "project" : "Gauge",
+    "namespaces" : {
+        "Website" : ["Get", "Post"],
+        "API" : ["Auth"]
+    },
+    
+    "listen" : "tcp://*:5553",
+    "server" : ":8081",
+    "cutoff" : "120h"
+}

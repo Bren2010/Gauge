@@ -1,0 +1,19 @@
+{{define "header"}}
+<html>
+    <head>
+        <title>{{.name}} Profiler</title>
+    </head>
+    <body>
+        <center><h1>{{.name}} Profiler</h1></center>
+        <center><b>Namespaces:  </b>
+        <ul style="list-style: none;display: inline;margin: 0;padding: 0">
+        {{range .namespaces}}
+            <li style="display: inline;margin: 2px"><a href="?namespace={{.}}">{{.}}</a></li>
+        {{end}}
+            <li style="display: inline;margin: 2px"><a href="/">(Home)</a></li>
+        </ul></center>
+{{end}}
+{{define "footer"}}
+    </body>
+</html>
+{{end}}

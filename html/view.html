@@ -1,0 +1,73 @@
+{{define "view"}}
+    {{template "header" .}}
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1', {packages: ['corechart']});
+    </script>
+    <script type="text/javascript">
+    var dataArray = [
+{{range $op := .operations}}
+        [
+            "Total Operations per Minute",
+            "Total Operations",
+            "#3366cc",
+            "graph_{{$op.Name}}_operations", 
+            [
+                ['x', 'Operations'],
+{{range $key, $bl := $op.Backlog}}
+                ['{{plus1 $key}}m', {{$bl.Operations}}],
+{{end}}
+            ]
+        ],
+        [
+            "Average Latency per Minute",
+            "Avg. Latency",
+            "#dc3912",
+            "graph_{{$op.Name}}_latency",
+            [
+                ['x', 'Latency (ms)'],
+{{range $key, $bl := $op.Backlog}}
+                ['{{plus1 $key}}m', {{$bl.Latency}}],
+{{end}}
+            ]
+        ],
+{{end}}
+    ];
+
+    function drawVisualization() {
+        for (k in dataArray) {
+            // Create and populate the data table.
+            var data = google.visualization.arrayToDataTable(dataArray[k][4]);
+            
+            // Create and draw the visualization.
+            new google.visualization.LineChart(document.getElementById(dataArray[k][3])).
+            draw(data, {curveType: "function",
+                    width: 450, height: 200,
+                    hAxis: {direction: -1, title: "Minutes Ago", minValue: 0},
+                    vAxis: {title: dataArray[k][1], minValue: 0},
+                    legend: {position: "none"},
+                    title: dataArray[k][0],
+                    colors: [dataArray[k][2]],
+            });
+        }
+    }
+
+
+    google.setOnLoadCallback(drawVisualization);
+    </script>
+<table style="margin-left: auto;margin-right: auto"><tr><td>
+{{range $op := .operations}}
+    <h2 style="display: inline">{{$op.Name}}</h2>
+    <span>(Score:  {{$op.Score}})</span><br />
+
+    <table>
+        <tr>
+            <td><span id="graph_{{$op.Name}}_operations"></span></td>
+            <td><span id="graph_{{$op.Name}}_latency"></span></td>
+        </tr>
+    </table>
+    <br /><br />
+{{end}}
+</td></tr></table>
+    {{template "footer" .}}
+{{end}}
