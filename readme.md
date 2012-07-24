@@ -1,10 +1,11 @@
 Gauge
 =====
-A real-time profiler that's not worth your time.
+A real-time profiler that's not worth your time.  Dependencies:
+```go get github.com/alecthomas/gozmq```
 
 Data is split up into namespaces and operations (Namespace:  Website, 
 Operations:  Create, Read, Update, Delete).  Send data to the configured 
-port (localhost:5553 by default) through ZeroMQ in the form:
+port (localhost:5553 by default) through ZeroMQ in the form of:
 ```
 {
     namespace: "Website",
