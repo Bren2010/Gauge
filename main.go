@@ -57,6 +57,7 @@ func main() {
     
     // Start real work.
     http.HandleFunc("/", dispatcher)
+    http.HandleFunc("/style/", httpCdn)
     
     go handler()
     go server()

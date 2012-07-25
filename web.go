@@ -1,15 +1,18 @@
 package main
 
 import (
+    "fmt"
     "html/template"
+    "io/ioutil"
     "log"
+    "mime"
     "net/http"
     "sort"
+    "strings"
 )
 
 var views *template.Template
 var files = []string {
-    "./html/index.html", 
     "./html/view.html",
     "./html/error.html", 
 }
@@ -27,6 +30,21 @@ func server() {
     log.Fatal(http.ListenAndServe(config["server"].(string), nil))
 }
 
+func httpCdn(w http.ResponseWriter, r *http.Request) {
+    uri := "." + r.RequestURI
+    data, err := ioutil.ReadFile(uri)
+    
+    if err == nil {
+        l := strings.LastIndex(uri, ".")
+        ext := uri[l:]
+        w.Header().Add("Content-Type", mime.TypeByExtension(ext))
+        
+        fmt.Fprintf(w, "%s", data)
+    } else {
+        fmt.Fprint(w, err)
+    }
+}
+
 func dispatcher(w http.ResponseWriter, r *http.Request) {
     vals := r.URL.Query()
     
@@ -38,7 +56,12 @@ func dispatcher(w http.ResponseWriter, r *http.Request) {
     
     // Get namespace
     namespace := vals.Get("namespace")
-    if namespace == "" { data, view = controller_index(); goto show }
+    if namespace == "" {
+        var ns string
+        for ns, _ = range (config["namespaces"].(map[string] interface{})) { break } // WTF
+        data, view = controller_minute(ns)
+        goto show
+    }
     
     //Validate namespace
     _, ok = (config["namespaces"].(map[string] interface{}))[namespace]
@@ -68,6 +91,7 @@ func controller_minute(namespace string) (map[string] interface{}, string) {
     sort.Sort(Head{ data })
     
     return map[string] interface{} {
+        "namespace" : namespace,
         "operations" : data,
     }, "view"
     

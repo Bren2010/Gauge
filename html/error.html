@@ -1,8 +1,10 @@
 {{define "error"}}
     {{template "header" .}}
-    <center>
-        <span style="font-family: Helvetica;color: red">{{.error}}</span>&nbsp;&nbsp;
-        <a style="font-family: Helvetica;" href="/">Go home?</a>
-    </center>
+<div class="alert alert-error">
+    <span>
+        <strong>Uh oh!</strong> {{.error}}  
+        <a style="font-family: Helvetica;" href="/">(Go home?)</a>
+    </span>
+</div>
     {{template "footer" .}}
 {{end}}
