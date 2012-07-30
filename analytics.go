@@ -7,7 +7,17 @@ import (
 )
 
 var cache = make(map[string] Namespace)
-var sizes = []int{1}
+var sizes = []int{1, 30, 60, 1440}
+var sizeNames = map[int] string {
+        1    : "Minute",
+        60   : "Hour",
+        1440 : "Day",
+    }
+var sizeLetters = map[int] string {
+        1    : "m",
+        60   : "h",
+        1440 : "d",
+    }
 
 type Head struct { Namespace }
 type Namespace []*Operation
@@ -68,7 +78,7 @@ func countUp(name string, size, place int) (float64, float64) {
     now := int(time.Now().Unix() / 60)
     
     for i := offset;i < size + offset;i++ {
-        min := now - offset
+        min := now - i
         _, ok := database[name][min]
         if !ok { continue }
         

@@ -2,6 +2,15 @@
     {{template "header" .}}
 <div class="page-header"><h1>{{.namespace}}</h1></div>
 
+<div class="btn-group">
+{{$namespace := .namespace}}
+{{$size := .size}}
+{{range $s, $n := .sizeNames}}
+    <a href="./?namespace={{$namespace}}&size={{$s}}" class="btn{{if equals $s $size}} disabled{{end}}">{{$n}}s</a>
+{{end}}
+</div><br />
+<br />
+
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript">
       google.load('visualization', '1', {packages: ['corechart']});
@@ -10,26 +19,26 @@
     var dataArray = [
 {{range $op := .operations}}
         [
-            "Total Operations per Minute",
+            "Total Operations per {{getSizeName $size}}",
             "Total Operations",
             "#3366cc",
             "graph_{{$op.Name}}_operations", 
             [
                 ['x', 'Operations'],
 {{range $key, $bl := $op.Backlog}}
-                ['{{plus1 $key}}m', {{$bl.Operations}}],
+                ['{{plus1 $key}}{{getSizeLetter $size}}', {{$bl.Operations}}],
 {{end}}
             ]
         ],
         [
-            "Average Latency per Minute",
+            "Average Latency per {{getSizeName $size}}",
             "Avg. Latency",
             "#dc3912",
             "graph_{{$op.Name}}_latency",
             [
                 ['x', 'Latency (ms)'],
 {{range $key, $bl := $op.Backlog}}
-                ['{{plus1 $key}}m', {{$bl.Latency}}],
+                ['{{plus1 $key}}{{getSizeLetter $size}}', {{$bl.Latency}}],
 {{end}}
             ]
         ],
@@ -45,7 +54,7 @@
             new google.visualization.LineChart(document.getElementById(dataArray[k][3])).
             draw(data, {curveType: "function",
                     width: 450, height: 200,
-                    hAxis: {direction: -1, title: "Minutes Ago", minValue: 0},
+                    hAxis: {direction: -1, title: "{{getSizeName $size}}s Ago", minValue: 0},
                     vAxis: {title: dataArray[k][1], minValue: 0},
                     legend: {position: "none"},
                     title: dataArray[k][0],
